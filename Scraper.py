@@ -5,7 +5,7 @@ from time import gmtime, strftime
 
 for counts in range(, ):
     tableurl = "http://uapd.arizona.edu/daily-activity-crime-log/2014?page=" + str(counts)
-
+    #example using 2014 data, change the range to equal the number of pages needing to be scraped with 0 being the first page
     if counts == 0:
         url = "http://uapd.arizona.edu/daily-activity-crime-log/2014"
         print("I am just starting on the first page")
@@ -40,13 +40,13 @@ for counts in range(, ):
         casepage = requests.get(caseurl, allow_redirects = False)
         casec = casepage.content
         casesoup = BeautifulSoup(casec)
-        # turns the page into a searchable soup
+        # turns the page into a searchable soup, and prevents endless redirects
 
         NewLine = []
         # Each new row of the CSV will be writen here, when called again it is erased
 
         if counts == 0 and cases == 0:
-            headers = ["Case Code", "Report Time and Date", "Offense Time and Date", "Crime Code", "Street Address", "Premise Code Definition", "Date Cleared", "Clearance Code Definition"]
+            headers = ["Case Code", "Report Time and Date", "Offense Time and Date", "Crime Code", "Crime Code Definition", "Street Address", "Premise Code Definition", "Date Cleared", "Clearance Code Definition"]
             CSVfile = open('newfile.txt','w')
             headerwriter = csv.writer(CSVfile, dialect='excel')
             headerwriter.writerow(headers)
@@ -87,7 +87,18 @@ for counts in range(, ):
             CC = CC.strip(" ")
             NewLine.append(CC)
         # gets CC, *hopefully* strips out formatting, and stores it in list
-
+        
+         try:
+            CCD = casesoup.body.find("div",
+                                    class_="""field field-name-field-crime-code-definition field-type-text field-label-above""").get_text()
+        except AttributeError:
+            NewLine.append("NA")
+        else:
+            CCD = CCD.strip("\n")
+            CCD = CCD.strip(" ")
+            NewLine.append(CCD)
+        # gets CCD, *hopefully* strips out formatting, and stores it in list
+        
         try:
             SA = casesoup.body.find("div",
                                     class_="""field field-name-field-street-address field-type-text field-label-above""").get_text()
@@ -135,4 +146,4 @@ for counts in range(, ):
             rowwriter = csv.writer(CSVfile, dialect="excel")
             rowwriter.writerow(NewLine)
 
-print("2014 (mostly) done betches")
+print("2014 scraping done ")
