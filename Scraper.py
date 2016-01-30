@@ -5,7 +5,7 @@ from time import gmtime, strftime
 
 for counts in range(, ):
     tableurl = "http://uapd.arizona.edu/daily-activity-crime-log/2014?page=" + str(counts)
-    #example using 2014 data, change the range to equal the number of pages needing to be scraped with 0 being the first page
+    #example using 2014 data, change the range to equal the number of pages needing to be scraped with 0 being the first page 
     if counts == 0:
         url = "http://uapd.arizona.edu/daily-activity-crime-log/2014"
         print("I am just starting on the first page")
@@ -13,7 +13,7 @@ for counts in range(, ):
         print("I finished page " + str(counts) + " at " + str(strftime("%Y-%m-%d %H:%M:%S", gmtime())))
     tablepage = requests.get(tableurl, allow_redirects = False)
     tablec = tablepage.content
-    # tablec now has all of the HTML from the                      table page, this from the requests module
+    # tablec now has all of the HTML from the table page, this from the requests module
 
     tablesoup = BeautifulSoup(tablec)
     # we now have a soup of the entire table through the beautifulsoup module,
@@ -33,7 +33,7 @@ for counts in range(, ):
         else:
             print("Something dun goofed on this page")
             localcaselist.append(lemon)
-    # generates a list of cases on the table page and adds the number to localcaselist, checks case length to catch exceptions
+    # generates a list of cases from the table page and adds the number to localcaselist, checks case length to catch exceptions
 
     for cases in range(0, len(localcaselist)):
         caseurl = "http://uapd.arizona.edu/daily-activity-crime-log/" + str(localcaselist[cases])
@@ -86,7 +86,7 @@ for counts in range(, ):
             CC = CC.strip("\n")
             CC = CC.strip(" ")
             NewLine.append(CC)
-        # gets CC, *hopefully* strips out formatting, and stores it in list
+        # gets CC, strips out formatting, and stores it in list
         
          try:
             CCD = casesoup.body.find("div",
@@ -97,7 +97,7 @@ for counts in range(, ):
             CCD = CCD.strip("\n")
             CCD = CCD.strip(" ")
             NewLine.append(CCD)
-        # gets CCD, *hopefully* strips out formatting, and stores it in list
+        # gets CCD, strips out formatting, and stores it in list
         
         try:
             SA = casesoup.body.find("div",
@@ -145,5 +145,5 @@ for counts in range(, ):
         with open('newfile.txt','a') as CSVfile:
             rowwriter = csv.writer(CSVfile, dialect="excel")
             rowwriter.writerow(NewLine)
-
+        #writes NewLine list to a row of the csv and then reloops for the next case in the list
 print("2014 scraping done ")
